@@ -4,7 +4,7 @@
 
 @section('content')
 <div class="container">
-    <form method="POST" action="{{ route('login/otp') }}">
+    <form method="POST" action="{{ route('login.otp.check') }}">
         @csrf
 
         <div class="form-group row">

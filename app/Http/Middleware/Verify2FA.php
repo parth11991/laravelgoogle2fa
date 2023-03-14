@@ -38,6 +38,6 @@ class Verify2FA
             return $next($request);
         }
 
-        return redirect(route('login/otp'));
+        return redirect(route('login.otp.show'));
     }
 }

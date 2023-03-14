@@ -49,6 +49,7 @@ class ProfileController extends Controller
      */
     public function twofaEnable(Request $request)
     {
+        
         $google2fa = new Google2FA();
 
         // retrieve secret from the session
