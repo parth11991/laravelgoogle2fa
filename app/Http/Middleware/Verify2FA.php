@@ -17,6 +17,7 @@ class Verify2FA
      */
     public function handle(Request $request, Closure $next)
     {
+
         // Not authenticated => no need to check
         if (!Auth::check()) {
             return $next($request);
@@ -27,6 +28,7 @@ class Verify2FA
             return $next($request);
         }
 
+        // dd(session("2fa_checked", false));
         // 2FA is already checked
         if (session("2fa_checked", false)) {
             return $next($request);
@@ -39,5 +41,6 @@ class Verify2FA
         }
 
         return redirect(route('login.otp.show'));
+        
     }
 }

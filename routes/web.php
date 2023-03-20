@@ -24,13 +24,18 @@ Route::get('/', function () {
     return view('welcome');
 });
 
+
+
 Auth::routes();
 
 Route::get('/home', [HomeController::class, 'index'])->name('home');
 Route::get('/2fa', [ProfileController::class, 'twofa'])->name('2fa');
 Route::post('/2faEnable', [App\Http\Controllers\ProfileController::class, 'twofaEnable'])->name('2faEnable');
+Route::get('/regenerateGoogle2FA', [App\Http\Controllers\ProfileController::class, 'regenerateGoogle2FA'])->name('regenerateGoogle2FA');
+
 Route::get('/login/otp', [App\Http\Controllers\Auth\OTPController::class, 'show'])->name('login.otp.show');
 Route::post('/login/otp', [App\Http\Controllers\Auth\OTPController::class, 'check'])->name('login.otp.check');
+
 
 
 Route::group(['middleware' => ['auth']], function() {

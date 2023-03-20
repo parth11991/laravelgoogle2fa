@@ -35,5 +35,8 @@
             </div>
         </div>
     </form>
+    <a href="{{ route('login.otp.show') }}?regenerateGoogle2FA=1" class="btn btn-primary">
+        Google 2FA re-enabled 
+    </a>
 </div>
 @endsection

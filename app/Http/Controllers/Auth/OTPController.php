@@ -15,9 +15,43 @@ class OTPController extends Controller
         $this->middleware('auth');
     }
 
-    public function show()
+    public function show(Request $request)
     {
-        return view('auth.otp');
+        if (isset($request->regenerateGoogle2FA) && $request->regenerateGoogle2FA==1) {
+            $google2fa = new Google2FA();
+            // generate a secret
+            $secret = $google2fa->generateSecretKey();
+
+            $user = Auth::user();
+            $user->twofa_secret = $secret;
+            $user->save();
+            //Session::flash('success', 'Google 2FA has been disabled for your account.');
+            //session(["2fa_checked" => false]);
+            $qr_code = $google2fa->getQRCodeInline(
+                env('APP_NAME', 'Laravel'),
+                $user->email,
+                $secret
+            );
+
+            // store the current secret in the session
+            // will be used when we enable 2FA (see below)
+            session(["2fa_secret" => $secret]);
+            session(["2fa_checked" => false]);
+
+            return view('profile.2fa', compact('qr_code'));
+        } else {
+            $google2fa = new Google2FA();
+            // generate the QR code, indicating the address 
+            // of the web application and the user name
+            // or email in this case
+            $qr_code = $google2fa->getQRCodeInline(
+                env('APP_NAME', 'Laravel'),
+                Auth::user()->email,
+                Auth::user()->twofa_secret
+            );
+
+            return view('auth.otp',compact('qr_code'));
+        }
     }
 
     public function check(Request $request)
@@ -33,4 +67,6 @@ class OTPController extends Controller
             'otp' => 'Incorrect value. Please try again...'
         ]);
     }
+
+    
 }

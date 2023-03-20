@@ -49,7 +49,7 @@ class ProfileController extends Controller
      */
     public function twofaEnable(Request $request)
     {
-        
+
         $google2fa = new Google2FA();
 
         // retrieve secret from the session
@@ -63,12 +63,37 @@ class ProfileController extends Controller
             $user->save();
 
             // avoid double OTP check
-            session(["2fa_checked" => true]);
+            session(["2fa_checked" => false]);
 
             return redirect(route('2fa'));
         }
 
         throw ValidationException::withMessages([
             'otp' => 'Incorrect value. Please try again...']);
+    }
+
+    public function regenerateGoogle2FA()
+    {
+        $google2fa = new Google2FA();
+        // generate a secret
+        $secret = $google2fa->generateSecretKey();
+
+        $user = Auth::user();
+        $user->twofa_secret = null;
+        $user->save();
+        //Session::flash('success', 'Google 2FA has been disabled for your account.');
+        //session(["2fa_checked" => false]);
+        $qr_code = $google2fa->getQRCodeInline(
+            env('APP_NAME', 'Laravel'),
+            $user->email,
+            $secret
+        );
+
+        // store the current secret in the session
+        // will be used when we enable 2FA (see below)
+        session(["2fa_secret" => $secret]);
+        session(["2fa_checked" => true]);
+
+        return view('profile.2fa', compact('qr_code'));
     }
 }
