@@ -17,7 +17,11 @@ class OTPController extends Controller
 
     public function show(Request $request)
     {
-        if (isset($request->regenerateGoogle2FA) && $request->regenerateGoogle2FA==1) {
+        if(auth()->user()->twofa_type != 'Code2fa'){
+            // avoid double OTP check
+            session(["2fa_checked" => true]);
+            return redirect("/");
+        }else if (isset($request->regenerateGoogle2FA) && $request->regenerateGoogle2FA==1) {
             $google2fa = new Google2FA();
             // generate a secret
             $secret = $google2fa->generateSecretKey();

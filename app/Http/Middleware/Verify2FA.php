@@ -17,7 +17,6 @@ class Verify2FA
      */
     public function handle(Request $request, Closure $next)
     {
-
         // Not authenticated => no need to check
         if (!Auth::check()) {
             return $next($request);
@@ -39,6 +38,7 @@ class Verify2FA
         if (request()->is('login/otp')) {
             return $next($request);
         }
+        
 
         return redirect(route('login.otp.show'));
         

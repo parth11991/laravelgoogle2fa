@@ -15,6 +15,7 @@ class UsersAddTwofaSecret extends Migration
     {
         Schema::table('users', function (Blueprint $table) {
             $table->string('twofa_secret', 255)->nullable();
+            $table->enum('twofa_type', ['Code2fa', 'Google2fa']);
         });
     }
 
