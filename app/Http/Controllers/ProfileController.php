@@ -71,29 +71,4 @@ class ProfileController extends Controller
         throw ValidationException::withMessages([
             'otp' => 'Incorrect value. Please try again...']);
     }
-
-    public function regenerateGoogle2FA()
-    {
-        $google2fa = new Google2FA();
-        // generate a secret
-        $secret = $google2fa->generateSecretKey();
-
-        $user = Auth::user();
-        $user->twofa_secret = null;
-        $user->save();
-        //Session::flash('success', 'Google 2FA has been disabled for your account.');
-        //session(["2fa_checked" => false]);
-        $qr_code = $google2fa->getQRCodeInline(
-            env('APP_NAME', 'Laravel'),
-            $user->email,
-            $secret
-        );
-
-        // store the current secret in the session
-        // will be used when we enable 2FA (see below)
-        session(["2fa_secret" => $secret]);
-        session(["2fa_checked" => true]);
-
-        return view('profile.2fa', compact('qr_code'));
-    }
 }
